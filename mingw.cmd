@@ -1,6 +1,4 @@
 @echo off
-if not exist build mkdir build
-pushd build
-cmake -G "Unix Makefiles" ..
-popd
-cmake --build build
+mkdir build_mingw > nul 2> nul
+cmake -G "Unix Makefiles" -Bbuild_mingw .
+cmake --build build_mingw

@@ -110,17 +110,27 @@ source_group("game" FILES ${CUTE_BLOCK_MAN_SRCS})
 source_group("imgui" FILES ${CUTE_BLOCK_MAN_IMGUI_SRCS})
 source_group("components" FILES ${CUTE_BLOCK_MAN_COMPONENT_SRCS})
 source_group("systems" FILES ${CUTE_BLOCK_MAN_SYSTEM_SRCS})
-target_link_libraries(block_man PRIVATE cute)
+target_link_libraries(block_man PRIVATE ${CUTE_LIBRARIES})
+target_include_directories(block_man PUBLIC ${CUTE_INCLUDES})
+target_include_directories(block_man PUBLIC "${PROJECT_SOURCE_DIR}/src")
+target_include_directories(block_man PUBLIC "${PROJECT_SOURCE_DIR}/libraries")
+
+# Web browser build.
 if(EMSCRIPTEN)
 	set(CMAKE_EXECUTABLE_SUFFIX ".html")
 	target_compile_options(block_man PUBLIC -O1 -fno-rtti -fno-exceptions)
 	target_link_options(block_man PRIVATE -o block_man.html --preload-file ../block_man/data --emrun -O1)
 endif()
-target_include_directories(block_man PUBLIC "${PROJECT_SOURCE_DIR}/src")
-target_include_directories(block_man PUBLIC "${PROJECT_SOURCE_DIR}/libraries")
-add_custom_command(TARGET block_man POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy "${PROJECT_SOURCE_DIR}/libraries/cute_framework/mingw/libcute.dll" $<TARGET_FILE_DIR:block_man>)
+
+# Place copy of data folder into build folder.
 add_custom_command(TARGET block_man POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory "${PROJECT_SOURCE_DIR}/src/data" "$<TARGET_FILE_DIR:block_man>/data")
 
+# Copy over the cute shared library into build folder.
+if(WIN32)
+	add_custom_command(TARGET block_man POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<$<CONFIG:Debug>:${CUTE_DLL_DEBUG}>$<$<NOT:$<CONFIG:Debug>>:${CUTE_DLL_RELEASE}>" "$<TARGET_FILE_DIR:block_man>")
+endif()
+
+# For convenience set MSVC debugger's working directory in the build folder.
 if (MSVC)
 	set_property(TARGET block_man PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:block_man>)
 endif()
