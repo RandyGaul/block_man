@@ -118,7 +118,7 @@ else() # MSVC or CL
 	find_library(
 		CUTE_DLL_DEBUG cute.dll
 		HINTS ${CMAKE_CURRENT_LIST_DIR}
-		PATH_SUFFIXES ${CF_RELEASE_PATH}
+		PATH_SUFFIXES ${CF_DEBUG_PATH}
 	)
 	find_library(
 		CUTE_DLL_RELEASE cute.dll
