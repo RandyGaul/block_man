@@ -68,8 +68,7 @@ struct Animator
 		
 		if (visible) {
 			sprite.transform = tx;
-			sprite.batch = batch;
-			sprite.draw();
+			sprite.draw(batch);
 		}
 	}
 

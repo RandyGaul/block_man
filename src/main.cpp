@@ -367,7 +367,6 @@ void do_lose_screen_stuff(float dt)
 	COROUTINE_START(co);
 	Darkness::lerp_to(0);
 	aseprite_cache_load(cache, "girl.aseprite", &player);
-	player.batch = batch;
 	player.play("idle");
 
 	if (Darkness::radius != 0) {
@@ -417,9 +416,8 @@ void do_lose_screen_stuff(float dt)
 		batch_outlines(batch, true);
 		batch_outlines_color(batch, make_color(0.8f, 0.1f, 0.1f));
 		batch_push_tint(batch, color_black());
-		player.batch = batch;
 		player.transform = player_last_tx();
-		player.draw();
+		player.draw(batch);
 		batch_flush(batch);
 		batch_pop_tint(batch);
 		batch_outlines(batch, false);
